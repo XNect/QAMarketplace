@@ -109,6 +109,7 @@ contract QAMarketplace is
     }
 
     function initialize(address _server) external initializer {
+        __ReentrancyGuard_init();
         __Ownable_init(msg.sender);
         server = _server;
         paused = false;
@@ -122,8 +123,8 @@ contract QAMarketplace is
         askerRefundPercentage = 45;
         answererRefundPercentage = 45;
         viewRewardPercentage = 10;
-        askerViewRewardPercentage = 50;
-        answererViewRewardPercentage = 40;
+        askerViewRewardPercentage = 45;
+        answererViewRewardPercentage = 45;
         MIN_REWARD = 0.01 ether;
     }
 
@@ -135,6 +136,7 @@ contract QAMarketplace is
     ) external whenNotPaused {
         // check if the address is already registered
         require(!registeredAddresses[user], "Address Already Used");
+        require(!registeredUIds[uid], "UID Already Used");
 
         // check if the expierTime is greater than current timestamp
         require(
@@ -404,5 +406,17 @@ contract QAMarketplace is
 
     function unpause() external onlyOwner {
         paused = false;
+    }
+
+    function setAskerViewRewardPercentage(
+        uint8 _askerViewRewardPercentage
+    ) external onlyOwner {
+        askerViewRewardPercentage = _askerViewRewardPercentage;
+    }
+
+    function setAnswererViewRewardPercentage(
+        uint8 _answererViewRewardPercentage
+    ) external onlyOwner {
+        answererViewRewardPercentage = _answererViewRewardPercentage;
     }
 }
