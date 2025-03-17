@@ -310,7 +310,7 @@ contract QAMarketplace is
     ) external payable whenNotPaused nonReentrant {
         QASession memory q = questions[_questionId];
         require(q.paymentAddress != address(0), "Question does not exist");
-
+        require(q.resolved || q.terminated, "Question is not processed");
         uint256 reward = (q.reward * viewRewardPercentage) / 100;
         require(msg.value >= reward, "Value must be greater than viewReward");
 
