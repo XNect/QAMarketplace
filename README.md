@@ -19,7 +19,7 @@ QAMarketplace is a subproject of Xnect that provides a question-and-answer marke
 ### 3. Paid Viewing
 
 - Public conversations can be viewed by others for 10% of the original question price
-- Revenue sharing: 50% to the questioner, 40% to the answerer, 10% platform fee
+- Revenue sharing: 45% to the questioner, 45% to the answerer, 10% platform fee
 
 ## Revenue Rules
 
