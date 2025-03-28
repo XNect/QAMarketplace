@@ -134,7 +134,7 @@ contract QAMarketplaceV2 is
         _setDefaultParameters();
     }
 
-    function reInitialize() external initializer {
+    function reInitialize() external reinitializer(2) {
         MAX_ASK_USER_COUNT = 10;
     }
 
@@ -408,7 +408,12 @@ contract QAMarketplaceV2 is
         uint256 _questionId,
         string calldata _uid
     ) external payable {
-        require(registeredUIds[_uid], "UID is not registered");
+        require(tx.origin == msg.sender, "Only EOA is allowed");
+        require(
+            uidToAddress[_uid] == msg.sender,
+            "UID is not registered to the sender"
+        );
+
         QASession memory q = questions[_questionId];
         require(q.paymentAddress != address(0), "Question does not exist");
         require(!q.resolved, "Question is already answered");
@@ -420,6 +425,15 @@ contract QAMarketplaceV2 is
             qaRewardPool.userCount <= MAX_ASK_USER_COUNT,
             "Additional reward count must be less than MAX_ASK_USER_COUNT"
         );
+
+        if (qaRewardPool.totalReward == 0) {
+            // compatible old version : add the asker as the first
+            qaRewardPool.totalReward = q.reward;
+            qaRewardPool.paymentAddresses.push(q.paymentAddress);
+            qaRewardPool.rewards.push(q.reward);
+            qaRewardPool.uids.push(q.askerId);
+            qaRewardPool.userCount = 1;
+        }
 
         qaRewardPool.totalReward += msg.value;
         qaRewardPool.paymentAddresses.push(msg.sender);
